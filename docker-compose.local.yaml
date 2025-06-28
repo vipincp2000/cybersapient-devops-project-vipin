@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  frontend-react:
+    build: ./frontend
+    container_name: local-react
+    ports:
+      - "80:80"
+    depends_on:
+      - backend-node
+    volumes:
+      - ./.docker/local/nginx.conf:/etc/nginx/conf.d/default.conf
+
+  backend-node:
+    build: ./backend
+    container_name: local-node
+    ports:
+      - "3000:3000"
+
