@@ -1,0 +1,39 @@
+name: Deployment to EC2 on Main Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to EC2 server
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup SSH Key
+      run: |
+        echo "${{ secrets.EC2_SSH_KEY }}" | base64 -d > app-key.pem
+        chmod 600 app-key.pem
+
+    - name: SSH and Deploy
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          set -e  # Stop script if any command fails
+
+          mkdir -p /var/www/my-app
+          cd /var/www/my-app
+
+          if [ ! -d .git ]; then
+            git clone https://github.com/vipincp2000/cybersapient-devops-project-vipin.git . 
+          else
+            git reset --hard
+            git pull origin main
+          fi
+
+          docker compose down
+          docker compose up -d --build
+        EOF

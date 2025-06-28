@@ -1,0 +1,6 @@
+aws_region       = "us-east-1"
+ec2_key_name     = "app-key"
+db_username      = "dbuser0112"
+db_password      = "mysecurepwd23211!"
+allowed_ssh_cidr = "my_ip/32"
+s3_bucket_name   = "project-bucket"
